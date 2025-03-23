@@ -35,19 +35,22 @@ void oai_init_audio_capture() {
     printf("Failed to configure I2S driver for audio output");
     return;
   }
+  // i2s: {mclk: -1, bclk: 9, ws: 10, dout: 8} # MAX98357
 
   i2s_pin_config_t pin_config_out = {
-      .mck_io_num = MCLK_PIN,
-      .bck_io_num = DAC_BCLK_PIN,
-      .ws_io_num = DAC_LRCLK_PIN,
-      .data_out_num = DAC_DATA_PIN,
+      .mck_io_num = -1,
+      .bck_io_num = 9,
+      .ws_io_num = 10,
+      .data_out_num = 8,
       .data_in_num = I2S_PIN_NO_CHANGE,
   };
+
   if (i2s_set_pin(I2S_NUM_0, &pin_config_out) != ESP_OK) {
     printf("Failed to set I2S pins for audio output");
     return;
   }
   i2s_zero_dma_buffer(I2S_NUM_0);
+
 
   i2s_config_t i2s_config_in = {
       .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
@@ -65,12 +68,13 @@ void oai_init_audio_capture() {
     return;
   }
 
+  // i2s: {mclk: -1, bclk: 2, ws: 3, din: 5, dout: -1} # INMP441
   i2s_pin_config_t pin_config_in = {
-      .mck_io_num = MCLK_PIN,
-      .bck_io_num = ADC_BCLK_PIN,
-      .ws_io_num = ADC_LRCLK_PIN,
+      .mck_io_num = -1,
+      .bck_io_num = 2,
+      .ws_io_num = 3,
       .data_out_num = I2S_PIN_NO_CHANGE,
-      .data_in_num = ADC_DATA_PIN,
+      .data_in_num = 5,
   };
   if (i2s_set_pin(I2S_NUM_1, &pin_config_in) != ESP_OK) {
     printf("Failed to set I2S pins for audio input");
